@@ -3,34 +3,39 @@
 <head lang="en">
     <meta charset="UTF-8">
     <title></title>
+    <script src="public/js/listRenderer.js"></script>
+
+    <style>
+        p {
+            margin: 0;
+        }
+
+        .person {
+            border: 1px solid gray;
+            height: 80px;
+            margin-bottom: -1px;
+        }
+
+        .person .photo {
+            margin: 10px;
+            float: left;
+            height: 60px;
+        }
+
+        .person .name {
+            height: 100%;
+        }
+
+    </style>
 </head>
 <body>
 
 <div id="container">
-    <div class="person">
-        <img class="photo" src="#">
-        <a href="#" class="reference">Person name</a>
-    </div>
 </div>
 
 <script>
     (function () {
-        var personBox = '';
-        personBox.concat(
-                '<div class="person">',
-                '<img class="photo" src="#">',
-                '<a href="#" class="reference">Person name</a>',
-                '</div>'
-        );
-
-        var personsContainer = document.getElementById('container');
-        for (var i = 0; i < 500; i++) {
-//            var content = document.createTextNode(personBox);
-//            personsContainer.appendChild(content);
-            personsContainer.innerHTML += personBox;
-            console.log(i);
-        }
-        console.log(personsContainer);
+        SG.listRenderer.render();
     })();
 </script>
 </body>
