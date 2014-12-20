@@ -7,12 +7,12 @@ SG.listRenderer = {
 
     config: {
         personBlockHeight: '81',
-        personsAmount: '50'
+        personsAmount: '500'
     },
 
     dynamicConfig: {
         viewHeight: '0',
-        personsToShow: '0'
+        personsToShowFirst: '0'
     },
 
     personsContainer: {},
@@ -24,30 +24,43 @@ SG.listRenderer = {
 
         this.setContainerHeight();
         this.calculateViewHeight();
-        this.calculatePersonsToShow();
+        this.calculatePersonsForFirstShow();
+
         this.bindScroll();
 
-        this.appendPersonsToList(this.dynamicConfig.personsToShow);
+        this.appendPersonsToList(this.dynamicConfig.personsToShowFirst);
     },
 
-    bindScroll: function() {
+    bindScroll: function () {
+        var lastOffset = 0;
+        var self = this;
         window.onscroll = function () {
+            var currentOffset = window.pageYOffset || document.documentElement.scrollTop;
+            var offsetDelta = currentOffset - lastOffset;
+
+            if (offsetDelta > self.config.personBlockHeight) {
+                var amountOfScrolledItems = offsetDelta / self.config.personBlockHeight;
+                amountOfScrolledItems = Math.round(amountOfScrolledItems);
+                self.appendPersonsToList(amountOfScrolledItems);
+
+                lastOffset = currentOffset - (currentOffset % self.config.personBlockHeight);
+            }
         };
     },
 
-    setContainerHeight: function() {
+    setContainerHeight: function () {
         this.personsContainer.style.height = this.config.personsAmount * this.config.personBlockHeight + 'px';
     },
 
-    calculateViewHeight: function() {
+    calculateViewHeight: function () {
         this.dynamicConfig.viewHeight = window.innerHeight;
     },
 
-    calculatePersonsToShow: function () {
+    calculatePersonsForFirstShow: function () {
         var amount = this.dynamicConfig.viewHeight / this.config.personBlockHeight;
         amount = Math.round(amount);
 
-        this.dynamicConfig.personsToShow = amount;
+        this.dynamicConfig.personsToShowFirst = amount;
     },
 
     appendPersonsToList: function (amount) {
@@ -56,13 +69,13 @@ SG.listRenderer = {
         for (var i = 0; i < persons.length; i++) {
             var person = persons[i];
 
-            nodes.push(this.createNode(person));
+            nodes.push(this.createTextNode(person));
         }
 
-        this.personsContainer.innerHTML = nodes.join('');
+        this.personsContainer.innerHTML += nodes.join('');
     },
 
-    createNode: function (person) {
+    createTextNode: function (person) {
         return this.getTemplate()
             .replace('%%_id_%%', person.id)
             .replace('%%_avatar_%%', person.img)
