@@ -5,13 +5,32 @@ SG.listRenderer = {
         container: 'container'
     },
 
-    init: function () {
+    config: {
+        personBlockHeight: '81',
+        personsAmount: '3'
+    },
 
+    personsContainer: {},
+
+    init: function () {
+        this.personsContainer = document.getElementById(this.selectors.container);
+        this.setContainerHeight();
+        this.bindScroll();
+
+        this.render();
+    },
+
+    bindScroll: function() {
+        window.onscroll = function () {
+        };
+    },
+
+    setContainerHeight: function() {
+        this.personsContainer.style.height = '10' * this.config.personsAmount * this.config.personBlockHeight + 'px';
     },
 
     render: function () {
-        var personsContainer = document.getElementById(this.selectors.container);
-        var persons = this.getFixtures(500);
+        var persons = this.getPersons(this.config.personsAmount);
 
         var nodes = [];
         for (var i = 0; i < persons.length; i++) {
@@ -20,7 +39,7 @@ SG.listRenderer = {
             nodes.push(this.createNode(person));
         }
 
-        personsContainer.innerHTML = nodes.join('');
+        this.personsContainer.innerHTML = nodes.join('');
     },
 
     createNode: function (person) {
@@ -30,7 +49,7 @@ SG.listRenderer = {
             .replace('%%_name_%%', person.name);
     },
 
-    getFixtures: function (amount) {
+    getPersons: function (amount) {
         var fixtures = [];
         var img = 1;
         for (var i = 1; i <= amount; i++) {
@@ -47,7 +66,7 @@ SG.listRenderer = {
     },
 
     getTemplate: function () {
-        return ''.concat(
+        return String().concat(
             '<div class="person" id="%%_id_%%">',
             '<img class="photo" src="%%_avatar_%%">',
             '<p class="name">%%_name_%%</a>',
