@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title></title>
+</head>
+<body>
+
+<div id="container">
+    <div class="person">
+        <img class="photo" src="#">
+        <a href="#" class="reference">Person name</a>
+    </div>
+</div>
+
+<script>
+    (function () {
+        var personBox = '';
+        personBox.concat(
+                '<div class="person">',
+                '<img class="photo" src="#">',
+                '<a href="#" class="reference">Person name</a>',
+                '</div>'
+        );
+
+        var personsContainer = document.getElementById('container');
+        for (var i = 0; i < 500; i++) {
+//            var content = document.createTextNode(personBox);
+//            personsContainer.appendChild(content);
+            personsContainer.innerHTML += personBox;
+            console.log(i);
+        }
+        console.log(personsContainer);
+    })();
+</script>
+</body>
+</html>
