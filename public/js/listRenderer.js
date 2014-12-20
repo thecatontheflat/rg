@@ -7,17 +7,27 @@ SG.listRenderer = {
 
     config: {
         personBlockHeight: '81',
-        personsAmount: '3'
+        personsAmount: '50'
+    },
+
+    dynamicConfig: {
+        viewHeight: '0',
+        personsToShow: '0'
     },
 
     personsContainer: {},
+    persons: [],
 
     init: function () {
         this.personsContainer = document.getElementById(this.selectors.container);
+        this.persons = this.getPersons();
+
         this.setContainerHeight();
+        this.calculateViewHeight();
+        this.calculatePersonsToShow();
         this.bindScroll();
 
-        this.render();
+        this.appendPersonsToList(this.dynamicConfig.personsToShow);
     },
 
     bindScroll: function() {
@@ -26,13 +36,23 @@ SG.listRenderer = {
     },
 
     setContainerHeight: function() {
-        this.personsContainer.style.height = '10' * this.config.personsAmount * this.config.personBlockHeight + 'px';
+        this.personsContainer.style.height = this.config.personsAmount * this.config.personBlockHeight + 'px';
     },
 
-    render: function () {
-        var persons = this.getPersons(this.config.personsAmount);
+    calculateViewHeight: function() {
+        this.dynamicConfig.viewHeight = window.innerHeight;
+    },
 
+    calculatePersonsToShow: function () {
+        var amount = this.dynamicConfig.viewHeight / this.config.personBlockHeight;
+        amount = Math.round(amount);
+
+        this.dynamicConfig.personsToShow = amount;
+    },
+
+    appendPersonsToList: function (amount) {
         var nodes = [];
+        var persons = this.persons.splice(0, amount);
         for (var i = 0; i < persons.length; i++) {
             var person = persons[i];
 
@@ -49,10 +69,10 @@ SG.listRenderer = {
             .replace('%%_name_%%', person.name);
     },
 
-    getPersons: function (amount) {
+    getPersons: function () {
         var fixtures = [];
         var img = 1;
-        for (var i = 1; i <= amount; i++) {
+        for (var i = 1; i <= this.config.personsAmount; i++) {
             if (img > 10) img = 1;
             fixtures.push({
                 id: i,
