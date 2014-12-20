@@ -11,7 +11,7 @@ SG.listRenderer = {
 
     render: function () {
         var personsContainer = document.getElementById(this.selectors.container);
-        var persons = this.getFixtures(10);
+        var persons = this.getFixtures(500);
 
         var nodes = [];
         for (var i = 0; i < persons.length; i++) {
@@ -23,7 +23,7 @@ SG.listRenderer = {
         personsContainer.innerHTML = nodes.join('');
     },
 
-    createNode: function(person) {
+    createNode: function (person) {
         return this.getTemplate()
             .replace('%%_id_%%', person.id)
             .replace('%%_avatar_%%', person.img)
@@ -32,22 +32,25 @@ SG.listRenderer = {
 
     getFixtures: function (amount) {
         var fixtures = [];
+        var img = 1;
         for (var i = 1; i <= amount; i++) {
+            if (img > 10) img = 1;
             fixtures.push({
                 id: i,
                 name: 'King George ' + i,
-                img: 'public/img/' + i + '.png'
+                img: 'public/img/' + img + '.jpeg'
             });
+            img++;
         }
 
         return fixtures;
     },
 
     getTemplate: function () {
-        return String.concat(
+        return ''.concat(
             '<div class="person" id="%%_id_%%">',
-                '<img class="photo" src="%%_avatar_%%">',
-                '<p class="name">%%_name_%%</a>',
+            '<img class="photo" src="%%_avatar_%%">',
+            '<p class="name">%%_name_%%</a>',
             '</div>'
         );
     }
