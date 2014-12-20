@@ -17,11 +17,13 @@ SG.listRenderer = {
 
     personsContainer: {},
     persons: [],
+    template: '',
 
     init: function () {
         this.personsContainer = document.getElementById(this.selectors.container);
         this.persons = this.getPersons();
 
+        this.buildTemplate();
         this.setContainerHeight();
         this.calculateViewHeight();
         this.calculatePersonsForFirstShow();
@@ -76,7 +78,7 @@ SG.listRenderer = {
     },
 
     createTextNode: function (person) {
-        return this.getTemplate()
+        return this.template
             .replace('%%_id_%%', person.id)
             .replace('%%_avatar_%%', person.img)
             .replace('%%_name_%%', person.name);
@@ -98,8 +100,8 @@ SG.listRenderer = {
         return fixtures;
     },
 
-    getTemplate: function () {
-        return String().concat(
+    buildTemplate: function () {
+        this.template = String().concat(
             '<div class="person" id="%%_id_%%">',
             '<img class="photo" src="%%_avatar_%%">',
             '<p class="name">%%_name_%%</a>',
