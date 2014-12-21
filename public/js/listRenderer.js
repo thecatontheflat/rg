@@ -46,7 +46,6 @@ SG.listRenderer = {
 
             // Perform calculations only when window was scrolled enough
             if (Math.abs(offsetDelta) >= personBlockHeight) {
-                console.log('scrolled 1 item');
                 //var amountOfScrolledItems = offsetDelta / personBlockHeight;
                 //amountOfScrolledItems = Math.round(amountOfScrolledItems);
                 //self.appendPersonsToList(amountOfScrolledItems);
@@ -59,7 +58,9 @@ SG.listRenderer = {
 
                 // Hide before current view
                 var personNode;
-                for (var i = 1; i < personsBeforeCurrentView; i++) {
+                //for (var i = 1; i < personsBeforeCurrentView; i++) {
+                for (var i = personsBeforeCurrentView - 5; i < personsBeforeCurrentView; i++) {
+                    if (i < 1) return;
                     personNode = document.getElementById('person-' + i);
                     if ('none' != personNode.style.display) {
                         personNode.style.display = 'none';
@@ -73,7 +74,9 @@ SG.listRenderer = {
                 }
 
                 // Hide after current view
-                for (var k = personsIncludingCurrentView + 1; k <= totalAmountOfPersons; k++) {
+                //for (var k = personsIncludingCurrentView + 1; k <= totalAmountOfPersons; k++) {
+                for (var k = personsIncludingCurrentView + 1; k <= personsIncludingCurrentView + 5; k++) {
+                    if (k >= totalAmountOfPersons) return;
                     personNode = document.getElementById('person-' + k);
                     if ('none' != personNode.style.display) {
                         personNode.style.display = 'none';
