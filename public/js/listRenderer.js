@@ -9,7 +9,8 @@ RG.listRenderer = {
 
     config: {
         personBlockHeight: 81,
-        personsAmount: 0
+        personsAmount: 0,
+        chunk: 200
     },
 
     dynamicConfig: {
@@ -65,13 +66,17 @@ RG.listRenderer = {
      */
     getRecalculateItemsClosure: function () {
         var lastOffset = 0;
+        var lastChunkOffset = 0;
+        var personBlockHeight = this.config.personBlockHeight;
+        var distanceToTriggerNewChunk = personBlockHeight * 150;
+
+        var totalAmountOfPersons = this.config.personsAmount;
+        var personsInView = this.dynamicConfig.personsInView;
+
         var self = this;
         return function () {
             var currentOffset = window.pageYOffset || document.documentElement.scrollTop;
             var offsetDelta = currentOffset - lastOffset;
-            var personBlockHeight = self.config.personBlockHeight;
-            var personsInView = self.dynamicConfig.personsInView;
-            var totalAmountOfPersons = self.config.personsAmount;
 
             // Perform calculations only when the window was scrolled enough
             if (Math.abs(offsetDelta) >= personBlockHeight) {
@@ -100,6 +105,30 @@ RG.listRenderer = {
                     if (k >= totalAmountOfPersons) continue;
                     self.hidePersonNode(k);
                 }
+            }
+
+            // Attach another chunk of nodes when needed
+            if (currentOffset - lastChunkOffset > distanceToTriggerNewChunk && self.persons.length > 0) {
+                console.log('attaching');
+                console.log('lastChunkOffset', lastChunkOffset);
+                console.log('currentOffset', currentOffset);
+                console.log('currentOffset - lastChunkOffset', currentOffset - lastChunkOffset);
+                var nodes = '';
+                var config = self.config;
+                var chunkCounter = config.personsAmount - self.persons.length;
+                var persons = self.persons.splice(0, config.chunk);
+                console.log('local persons', persons.length);
+                console.log('global persons', self.persons.length);
+                for (var cc = 0; cc < persons.length; cc++) {
+                    var person = persons[cc];
+                    var offset = chunkCounter * config.personBlockHeight;
+
+                    nodes += RG.helper.createTextNode(person, offset, false);
+                    chunkCounter++;
+                }
+
+                lastChunkOffset = currentOffset;
+                self.personsContainer.innerHTML += nodes;
             }
         }
     },
@@ -171,8 +200,9 @@ RG.listRenderer = {
     renderInitialList: function (initialAmount) {
         var nodes = '';
         var config = this.config;
-        for (var i = 0; i < config.personsAmount; i++) {
-            var person = this.persons[i];
+        var persons = this.persons.splice(0, config.chunk);
+        for (var i = 0; i < persons.length; i++) {
+            var person = persons[i];
             var offset = i * config.personBlockHeight;
             var displayedInitially = i < initialAmount;
 
@@ -180,5 +210,9 @@ RG.listRenderer = {
         }
 
         this.personsContainer.innerHTML = nodes;
+    },
+
+    attachBunchOfPersons: function() {
+
     }
 };
