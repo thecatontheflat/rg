@@ -83,6 +83,7 @@ RG.listRenderer = {
 
     hidePersonNode: function (counter) {
         var personNode = document.getElementById(this.selectors.person + counter);
+        if (!personNode) return;
         if ('none' != personNode.style.display) {
             personNode.style.display = 'none';
         }
@@ -90,6 +91,8 @@ RG.listRenderer = {
 
     showPersonNode: function (counter) {
         var personNode = document.getElementById(this.selectors.person + counter);
+        if (!personNode) return;
+
         var photoNode = document.getElementById(this.selectors.photo + counter);
 
         var photoNodeAttributes = photoNode.attributes;
