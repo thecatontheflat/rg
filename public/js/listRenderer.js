@@ -15,7 +15,8 @@ RG.listRenderer = {
 
     dynamicConfig: {
         viewHeight: 0,
-        personsInView: 0
+        personsInView: 0,
+        chunksProcessed: 1
     },
 
     personsContainer: {},
@@ -34,7 +35,7 @@ RG.listRenderer = {
         this.personsContainer = document.getElementById(this.selectors.container);
         this.persons = RG.helper.getPersons(personsAmount);
 
-        this.setContainerHeight();
+        this.expandContainerHeight();
         this.calculateViewHeight();
         this.calculatePersonsForFirstShow();
 
@@ -108,17 +109,12 @@ RG.listRenderer = {
             }
 
             // Attach another chunk of nodes when needed
-            if (currentOffset - lastChunkOffset > distanceToTriggerNewChunk && self.persons.length > 0) {
-                console.log('attaching');
-                console.log('lastChunkOffset', lastChunkOffset);
-                console.log('currentOffset', currentOffset);
-                console.log('currentOffset - lastChunkOffset', currentOffset - lastChunkOffset);
+            var scrolledSinceLastChunk = currentOffset - lastChunkOffset;
+            if (scrolledSinceLastChunk >= distanceToTriggerNewChunk && self.persons.length > 0) {
                 var nodes = '';
                 var config = self.config;
                 var chunkCounter = config.personsAmount - self.persons.length;
                 var persons = self.persons.splice(0, config.chunk);
-                console.log('local persons', persons.length);
-                console.log('global persons', self.persons.length);
                 for (var cc = 0; cc < persons.length; cc++) {
                     var person = persons[cc];
                     var offset = chunkCounter * config.personBlockHeight;
@@ -127,8 +123,9 @@ RG.listRenderer = {
                     chunkCounter++;
                 }
 
-                lastChunkOffset = currentOffset;
                 self.personsContainer.innerHTML += nodes;
+                self.expandContainerHeight();
+                lastChunkOffset = currentOffset;
             }
         }
     },
@@ -171,8 +168,18 @@ RG.listRenderer = {
      * Sets height of the items container
      * Since items are hidden initially with display none - we have to be able to scroll the page
      */
-    setContainerHeight: function () {
-        this.personsContainer.style.height = this.config.personsAmount * this.config.personBlockHeight + 'px';
+    expandContainerHeight: function () {
+        var config = this.config;
+        var dynamicConfig = this.dynamicConfig;
+
+        var calculatedHeight = dynamicConfig.chunksProcessed * config.chunk * config.personBlockHeight;
+        var maxAllowedHeight = config.personsAmount * config.personBlockHeight;
+        if (calculatedHeight > maxAllowedHeight) {
+            calculatedHeight = maxAllowedHeight;
+        }
+
+        this.personsContainer.style.height = calculatedHeight + 'px';
+        this.dynamicConfig.chunksProcessed++;
     },
 
     /**
@@ -210,9 +217,5 @@ RG.listRenderer = {
         }
 
         this.personsContainer.innerHTML = nodes;
-    },
-
-    attachBunchOfPersons: function() {
-
     }
 };
