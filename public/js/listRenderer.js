@@ -121,17 +121,16 @@ RG.listRenderer = {
     },
 
     renderInitialList: function (initialAmount) {
-        var nodes = [];
+        var nodes = '';
         var config = this.config;
         for (var i = 0; i < config.personsAmount; i++) {
             var person = this.persons[i];
             var offset = i * config.personBlockHeight;
             var displayedInitially = i < initialAmount;
 
-            var node = RG.helper.createTextNode(person, offset, displayedInitially);
-            nodes.push(node);
+            nodes += RG.helper.createTextNode(person, offset, displayedInitially);
         }
 
-        this.personsContainer.innerHTML += nodes.join('');
+        this.personsContainer.innerHTML = nodes;
     }
 };
