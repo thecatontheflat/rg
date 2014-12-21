@@ -40,15 +40,11 @@ SG.listRenderer = {
             var currentOffset = window.pageYOffset || document.documentElement.scrollTop;
             var offsetDelta = currentOffset - lastOffset;
             var personBlockHeight = self.config.personBlockHeight;
-            //var viewHeight = self.dynamicConfig.viewHeight;
             var personsInView = self.dynamicConfig.personsInView;
             var totalAmountOfPersons = self.config.personsAmount;
 
-            // Perform calculations only when window was scrolled enough
+            // Perform calculations only when the window was scrolled enough
             if (Math.abs(offsetDelta) >= personBlockHeight) {
-                //var amountOfScrolledItems = offsetDelta / personBlockHeight;
-                //amountOfScrolledItems = Math.round(amountOfScrolledItems);
-                //self.appendPersonsToList(amountOfScrolledItems);
                 lastOffset = currentOffset - (currentOffset % personBlockHeight);
 
                 // Calculating items in the current view
@@ -58,9 +54,9 @@ SG.listRenderer = {
 
                 // Hide before current view
                 var personNode;
-                //for (var i = 1; i < personsBeforeCurrentView; i++) {
-                for (var i = personsBeforeCurrentView - 5; i < personsBeforeCurrentView; i++) {
-                    if (i < 1) return;
+                var removableNodesBefore = personsBeforeCurrentView - 2;
+                for (var i = personsBeforeCurrentView; i > removableNodesBefore; i--) {
+                    if (i < 1) continue;
                     personNode = document.getElementById('person-' + i);
                     if ('none' != personNode.style.display) {
                         personNode.style.display = 'none';
@@ -74,9 +70,8 @@ SG.listRenderer = {
                 }
 
                 // Hide after current view
-                //for (var k = personsIncludingCurrentView + 1; k <= totalAmountOfPersons; k++) {
-                for (var k = personsIncludingCurrentView + 1; k <= personsIncludingCurrentView + 5; k++) {
-                    if (k >= totalAmountOfPersons) return;
+                for (var k = personsIncludingCurrentView + 1; k <= personsIncludingCurrentView + 2; k++) {
+                    if (k >= totalAmountOfPersons) continue;
                     personNode = document.getElementById('person-' + k);
                     if ('none' != personNode.style.display) {
                         personNode.style.display = 'none';
