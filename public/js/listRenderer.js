@@ -2,17 +2,19 @@ var RG = RG || {};
 
 RG.listRenderer = {
     selectors: {
-        container: 'container'
+        container: 'container',
+        person: 'person-',
+        photo: 'photo-'
     },
 
     config: {
-        personBlockHeight: '81',
+        personBlockHeight: 81,
         personsAmount: 0
     },
 
     dynamicConfig: {
-        viewHeight: '0',
-        personsInView: '0'
+        viewHeight: 0,
+        personsInView: 0
     },
 
     personsContainer: {},
@@ -66,6 +68,7 @@ RG.listRenderer = {
 
                 // Show current view
                 for (var p = personsBeforeCurrentView + 1; p <= personsIncludingCurrentView; p++) {
+                    if (p > totalAmountOfPersons) continue;
                     self.showPersonNode(p);
                 }
 
@@ -79,19 +82,19 @@ RG.listRenderer = {
     },
 
     hidePersonNode: function (counter) {
-        var personNode = document.getElementById('person-' + counter);
+        var personNode = document.getElementById(this.selectors.person + counter);
         if ('none' != personNode.style.display) {
             personNode.style.display = 'none';
         }
     },
 
     showPersonNode: function (counter) {
-        var personNode = document.getElementById('person-' + counter);
-        var photoNode = document.getElementById('photo-' + counter);
+        var personNode = document.getElementById(this.selectors.person + counter);
+        var photoNode = document.getElementById(this.selectors.photo + counter);
 
         var photoNodeAttributes = photoNode.attributes;
-        var realAvatar = photoNodeAttributes['data-src'].nodeValue;
-        var currentAvatar = photoNodeAttributes['src'].nodeValue;
+        var realAvatar = photoNodeAttributes['data-src'].value;
+        var currentAvatar = photoNodeAttributes['src'].value;
         if (realAvatar != currentAvatar) {
             photoNode.setAttribute('src', realAvatar);
         }

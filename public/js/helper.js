@@ -40,6 +40,7 @@ RG.helper = {
             displayStyle = 'table';
             image = imagePath;
         }
+
         textNode = textNode
             .replace('%%_dummy_avatar_%%', image)
             .replace('%%_display_%%', displayStyle);
