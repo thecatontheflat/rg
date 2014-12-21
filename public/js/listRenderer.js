@@ -58,21 +58,26 @@ SG.listRenderer = {
                 var personsIncludingCurrentView = personsBeforeCurrentView + personsInView;
 
                 // Hide before current view
+                var personNode;
                 for (var i = 1; i < personsBeforeCurrentView; i++) {
-                    var personNode = document.getElementById('person-' + i);
-                    personNode.style.display = 'none';
+                    personNode = document.getElementById('person-' + i);
+                    if ('none' != personNode.style.display) {
+                        personNode.style.display = 'none';
+                    }
                 }
 
                 // Show current view
                 for (var p = personsBeforeCurrentView + 1; p <= personsIncludingCurrentView; p++) {
-                    var personNode = document.getElementById('person-' + p);
+                    personNode = document.getElementById('person-' + p);
                     personNode.style.display = 'table';
                 }
 
                 // Hide after current view
                 for (var k = personsIncludingCurrentView + 1; k <= totalAmountOfPersons; k++) {
-                    var personNode = document.getElementById('person-' + k);
-                    personNode.style.display = 'none';
+                    personNode = document.getElementById('person-' + k);
+                    if ('none' != personNode.style.display) {
+                        personNode.style.display = 'none';
+                    }
                 }
             }
         };
