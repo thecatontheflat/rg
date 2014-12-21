@@ -17,7 +17,7 @@ RG.helper = {
             if (nameId > 239) nameId = 0;
             fixtures.push({
                 id: i,
-                name: this.names[nameId],
+                name: this.names[nameId] + ' #' + i,
                 img: 'public/img/' + img + '.jpeg'
             });
             img++;
