@@ -57,7 +57,6 @@ SG.listRenderer = {
                 var personsIncludingCurrentView = personsBeforeCurrentView + personsInView;
 
                 // Hide before current view
-                var personNode;
                 var removableNodesBefore = personsBeforeCurrentView - 2;
                 for (var i = personsBeforeCurrentView; i > removableNodesBefore; i--) {
                     if (i < 1) continue;
@@ -66,11 +65,7 @@ SG.listRenderer = {
 
                 // Show current view
                 for (var p = personsBeforeCurrentView + 1; p <= personsIncludingCurrentView; p++) {
-                    personNode = document.getElementById('person-' + p);
-                    var photoNode = document.getElementById('photo-' + p);
-                    var avatar = photoNode.getAttribute('data-src');
-                    photoNode.setAttribute('src', avatar);
-                    personNode.style.display = 'table';
+                    self.showPersonNode(p);
                 }
 
                 // Hide after current view
@@ -82,11 +77,19 @@ SG.listRenderer = {
         }
     },
 
-    hidePersonNode: function(counter) {
+    hidePersonNode: function (counter) {
         var personNode = document.getElementById('person-' + counter);
         if ('none' != personNode.style.display) {
             personNode.style.display = 'none';
         }
+    },
+
+    showPersonNode: function (counter) {
+        var personNode = document.getElementById('person-' + counter);
+        var photoNode = document.getElementById('photo-' + counter);
+        var avatar = photoNode.getAttribute('data-src');
+        photoNode.setAttribute('src', avatar);
+        personNode.style.display = 'table';
     },
 
     setContainerHeight: function () {
@@ -110,23 +113,35 @@ SG.listRenderer = {
         for (var i = 0; i < config.personsAmount; i++) {
             var person = this.persons[i];
             var offset = i * config.personBlockHeight;
-            var displayed = i < initialAmount;
+            var displayedInitially = i < initialAmount;
 
-            nodes.push(this.createTextNode(person, offset, displayed));
+            nodes.push(this.createTextNode(person, offset, displayedInitially));
         }
 
         this.personsContainer.innerHTML += nodes.join('');
     },
 
     createTextNode: function (person, offset, displayed) {
+        var imagePath = person.img + '?v=' + person.id;
+        var fakeImage = 'public/img/0.jpeg';
+
         var textNode = this.template
             .replace('%%_id_%%', person.id)
             .replace('%%_photo_id_%%', person.id)
-            .replace('%%_avatar_%%', person.img + '?v=' + person.id)
+            .replace('%%_avatar_%%', imagePath)
             .replace('%%_top_%%', offset)
             .replace('%%_name_%%', person.name);
 
-        textNode = displayed ? textNode.replace('%%_display_%%', 'table') : textNode.replace('%%_display_%%', 'none');
+        var displayStyle = 'none';
+        var image = fakeImage;
+        if (displayed) {
+            displayStyle = 'table';
+            image = imagePath;
+        }
+        textNode = textNode
+            .replace('%%_dummy_avatar_%%', image)
+            .replace('%%_display_%%', displayStyle);
+
 
         return textNode;
     },
@@ -150,7 +165,7 @@ SG.listRenderer = {
     buildTemplate: function () {
         this.template = String().concat(
             '<div class="person" id="person-%%_id_%%" style="display: %%_display_%%; top: %%_top_%%px">',
-            '<img class="photo" id="photo-%%_photo_id_%%" data-src="%%_avatar_%%" src="public/img/0.jpeg">',
+            '<img class="photo" id="photo-%%_photo_id_%%" data-src="%%_avatar_%%" src="%%_dummy_avatar_%%">',
             '<p class="name">%%_name_%%</a>',
             '</div>'
         );
