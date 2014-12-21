@@ -20,6 +20,12 @@ RG.listRenderer = {
     personsContainer: {},
     persons: [],
 
+    /**
+     * Object entry point.
+     * Should be called to configure all properties
+     *
+     * @param personsAmount
+     */
     init: function (personsAmount) {
         RG.helper.init();
 
@@ -36,10 +42,27 @@ RG.listRenderer = {
         this.renderInitialList(this.dynamicConfig.personsInView);
     },
 
+    /**
+     * Binds a function to the scroll event
+     */
     bindScroll: function () {
         window.onscroll = this.getRecalculateItemsClosure();
     },
 
+    /**
+     * Returns closure, that contains all re-calculation logic
+     *
+     * The closure calculates the drag distance.
+     * If the drag distance is enough (more than 1 person block height) -
+     * only then we perform further calculations
+     *
+     * The logic of the further calculations is following:
+     *      - calculate items that are currently present in the view
+     *      - show them
+     *      - hide some items before and after the currently presented
+     *
+     * @returns {Function}
+     */
     getRecalculateItemsClosure: function () {
         var lastOffset = 0;
         var self = this;
@@ -81,6 +104,11 @@ RG.listRenderer = {
         }
     },
 
+    /**
+     * Hides a node
+     *
+     * @param counter
+     */
     hidePersonNode: function (counter) {
         var personNode = document.getElementById(this.selectors.person + counter);
         if (!personNode) return;
@@ -89,6 +117,11 @@ RG.listRenderer = {
         }
     },
 
+    /**
+     * Reveals a node
+     *
+     * @param counter
+     */
     showPersonNode: function (counter) {
         var personNode = document.getElementById(this.selectors.person + counter);
         if (!personNode) return;
@@ -105,14 +138,24 @@ RG.listRenderer = {
         personNode.style.display = 'table';
     },
 
+    /**
+     * Sets height of the items container
+     * Since items are hidden initially with display none - we have to be able to scroll the page
+     */
     setContainerHeight: function () {
         this.personsContainer.style.height = this.config.personsAmount * this.config.personBlockHeight + 'px';
     },
 
+    /**
+     * Sets the height of the viewport to the config
+     */
     calculateViewHeight: function () {
         this.dynamicConfig.viewHeight = window.innerHeight;
     },
 
+    /**
+     * Sets the amount of initially displayed items
+     */
     calculatePersonsForFirstShow: function () {
         var amount = this.dynamicConfig.viewHeight / this.config.personBlockHeight;
         amount = Math.round(amount);
@@ -120,6 +163,11 @@ RG.listRenderer = {
         this.dynamicConfig.personsInView = amount;
     },
 
+    /**
+     * Renders the whole tree
+     *
+     * @param initialAmount
+     */
     renderInitialList: function (initialAmount) {
         var nodes = '';
         var config = this.config;
