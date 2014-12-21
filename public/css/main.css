@@ -1,0 +1,38 @@
+p {
+    margin: 0;
+}
+
+html {
+    overflow-x: hidden;
+}
+
+#container {
+    /*border: 1px solid black;*/
+    padding: 5px;
+}
+
+.person {
+    position: absolute;
+    display: table;
+    border-top: 1px dotted gray;
+    height: 80px;
+    width: 100%;
+}
+
+.person .photo {
+    margin: 10px;
+    float: left;
+    height: 60px;
+}
+
+.person .name {
+    display: table-cell;
+    text-align: left;
+    vertical-align: middle;
+    width: 100%;;
+    text-decoration: underline;
+}
+
+.hidden {
+    display: none;
+}
