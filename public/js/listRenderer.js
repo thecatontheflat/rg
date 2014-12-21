@@ -7,12 +7,12 @@ SG.listRenderer = {
 
     config: {
         personBlockHeight: '81',
-        personsAmount: '500'
+        personsAmount: '25000'
     },
 
     dynamicConfig: {
         viewHeight: '0',
-        personsToShowFirst: '0'
+        personsInView: '0'
     },
 
     personsContainer: {},
@@ -30,7 +30,7 @@ SG.listRenderer = {
 
         this.bindScroll();
 
-        this.appendPersonsToList(this.dynamicConfig.personsToShowFirst);
+        this.renderInitialList(this.dynamicConfig.personsInView);
     },
 
     bindScroll: function () {
@@ -39,13 +39,41 @@ SG.listRenderer = {
         window.onscroll = function () {
             var currentOffset = window.pageYOffset || document.documentElement.scrollTop;
             var offsetDelta = currentOffset - lastOffset;
+            var personBlockHeight = self.config.personBlockHeight;
+            //var viewHeight = self.dynamicConfig.viewHeight;
+            var personsInView = self.dynamicConfig.personsInView;
+            var totalAmountOfPersons = self.config.personsAmount;
 
-            if (offsetDelta > self.config.personBlockHeight) {
-                var amountOfScrolledItems = offsetDelta / self.config.personBlockHeight;
-                amountOfScrolledItems = Math.round(amountOfScrolledItems);
-                self.appendPersonsToList(amountOfScrolledItems);
+            // Perform calculations only when window was scrolled enough
+            if (Math.abs(offsetDelta) >= personBlockHeight) {
+                console.log('scrolled 1 item');
+                //var amountOfScrolledItems = offsetDelta / personBlockHeight;
+                //amountOfScrolledItems = Math.round(amountOfScrolledItems);
+                //self.appendPersonsToList(amountOfScrolledItems);
+                lastOffset = currentOffset - (currentOffset % personBlockHeight);
 
-                lastOffset = currentOffset - (currentOffset % self.config.personBlockHeight);
+                // Calculating items in the current view
+                var personsBeforeCurrentView = lastOffset / personBlockHeight;
+                personsBeforeCurrentView = Math.ceil(personsBeforeCurrentView);
+                var personsIncludingCurrentView = personsBeforeCurrentView + personsInView;
+
+                // Hide before current view
+                for (var i = 1; i < personsBeforeCurrentView; i++) {
+                    var personNode = document.getElementById('person-' + i);
+                    personNode.style.display = 'none';
+                }
+
+                // Show current view
+                for (var p = personsBeforeCurrentView + 1; p <= personsIncludingCurrentView; p++) {
+                    var personNode = document.getElementById('person-' + p);
+                    personNode.style.display = 'table';
+                }
+
+                // Hide after current view
+                for (var k = personsIncludingCurrentView + 1; k <= totalAmountOfPersons; k++) {
+                    var personNode = document.getElementById('person-' + k);
+                    personNode.style.display = 'none';
+                }
             }
         };
     },
@@ -62,26 +90,33 @@ SG.listRenderer = {
         var amount = this.dynamicConfig.viewHeight / this.config.personBlockHeight;
         amount = Math.round(amount);
 
-        this.dynamicConfig.personsToShowFirst = amount;
+        this.dynamicConfig.personsInView = amount;
     },
 
-    appendPersonsToList: function (amount) {
+    renderInitialList: function (initialAmount) {
         var nodes = [];
-        var persons = this.persons.splice(0, amount);
-        for (var i = 0; i < persons.length; i++) {
-            var person = persons[i];
+        var config = this.config;
+        for (var i = 0; i < config.personsAmount; i++) {
+            var person = this.persons[i];
+            var offset = i * config.personBlockHeight;
+            var displayed = i < initialAmount;
 
-            nodes.push(this.createTextNode(person));
+            nodes.push(this.createTextNode(person, offset, displayed));
         }
 
         this.personsContainer.innerHTML += nodes.join('');
     },
 
-    createTextNode: function (person) {
-        return this.template
+    createTextNode: function (person, offset, displayed) {
+        var textNode = this.template
             .replace('%%_id_%%', person.id)
-            .replace('%%_avatar_%%', person.img)
+            .replace('%%_avatar_%%', person.img + '?v=' + person.id)
+            .replace('%%_top_%%', offset)
             .replace('%%_name_%%', person.name);
+
+        textNode = displayed ? textNode.replace('%%_display_%%', 'table') : textNode.replace('%%_display_%%', 'none');
+
+        return textNode;
     },
 
     getPersons: function () {
@@ -102,9 +137,9 @@ SG.listRenderer = {
 
     buildTemplate: function () {
         this.template = String().concat(
-            '<div class="person" id="%%_id_%%">',
-            '<img class="photo" src="%%_avatar_%%">',
-            '<p class="name">%%_name_%%</a>',
+            '<div class="person" id="person-%%_id_%%" style="display: %%_display_%%; top: %%_top_%%px">',
+                '<img class="photo" data-src="%%_avatar_%%" src="public/img/1.jpeg">',
+                '<p class="name">%%_name_%%</a>',
             '</div>'
         );
     }
