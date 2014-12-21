@@ -1,13 +1,13 @@
-var SG = SG || {};
+var RG = RG || {};
 
-SG.listRenderer = {
+RG.listRenderer = {
     selectors: {
         container: 'container'
     },
 
     config: {
         personBlockHeight: '81',
-        personsAmount: '250'
+        personsAmount: 0
     },
 
     dynamicConfig: {
@@ -19,7 +19,8 @@ SG.listRenderer = {
     persons: [],
     template: '',
 
-    init: function () {
+    init: function (personsAmount) {
+        this.config.personsAmount = personsAmount;
         this.personsContainer = document.getElementById(this.selectors.container);
         this.persons = this.getPersons();
 
@@ -87,8 +88,14 @@ SG.listRenderer = {
     showPersonNode: function (counter) {
         var personNode = document.getElementById('person-' + counter);
         var photoNode = document.getElementById('photo-' + counter);
-        var avatar = photoNode.getAttribute('data-src');
-        photoNode.setAttribute('src', avatar);
+
+        var photoNodeAttributes = photoNode.attributes;
+        var realAvatar = photoNodeAttributes['data-src'].nodeValue;
+        var currentAvatar = photoNodeAttributes['src'].nodeValue;
+        if (realAvatar != currentAvatar) {
+            photoNode.setAttribute('src', realAvatar);
+        }
+
         personNode.style.display = 'table';
     },
 
