@@ -61,10 +61,7 @@ SG.listRenderer = {
                 var removableNodesBefore = personsBeforeCurrentView - 2;
                 for (var i = personsBeforeCurrentView; i > removableNodesBefore; i--) {
                     if (i < 1) continue;
-                    personNode = document.getElementById('person-' + i);
-                    if ('none' != personNode.style.display) {
-                        personNode.style.display = 'none';
-                    }
+                    self.hidePersonNode(i);
                 }
 
                 // Show current view
@@ -79,12 +76,16 @@ SG.listRenderer = {
                 // Hide after current view
                 for (var k = personsIncludingCurrentView + 1; k <= personsIncludingCurrentView + 2; k++) {
                     if (k >= totalAmountOfPersons) continue;
-                    personNode = document.getElementById('person-' + k);
-                    if ('none' != personNode.style.display) {
-                        personNode.style.display = 'none';
-                    }
+                    self.hidePersonNode(k);
                 }
             }
+        }
+    },
+
+    hidePersonNode: function(counter) {
+        var personNode = document.getElementById('person-' + counter);
+        if ('none' != personNode.style.display) {
+            personNode.style.display = 'none';
         }
     },
 
