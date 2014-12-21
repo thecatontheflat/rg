@@ -7,7 +7,7 @@ SG.listRenderer = {
 
     config: {
         personBlockHeight: '81',
-        personsAmount: '25000'
+        personsAmount: '250'
     },
 
     dynamicConfig: {
@@ -34,9 +34,13 @@ SG.listRenderer = {
     },
 
     bindScroll: function () {
+        window.onscroll = this.getRecalculateItemsClosure();
+    },
+
+    getRecalculateItemsClosure: function () {
         var lastOffset = 0;
         var self = this;
-        window.onscroll = function () {
+        return function () {
             var currentOffset = window.pageYOffset || document.documentElement.scrollTop;
             var offsetDelta = currentOffset - lastOffset;
             var personBlockHeight = self.config.personBlockHeight;
@@ -66,6 +70,9 @@ SG.listRenderer = {
                 // Show current view
                 for (var p = personsBeforeCurrentView + 1; p <= personsIncludingCurrentView; p++) {
                     personNode = document.getElementById('person-' + p);
+                    var photoNode = document.getElementById('photo-' + p);
+                    var avatar = photoNode.getAttribute('data-src');
+                    photoNode.setAttribute('src', avatar);
                     personNode.style.display = 'table';
                 }
 
@@ -78,7 +85,7 @@ SG.listRenderer = {
                     }
                 }
             }
-        };
+        }
     },
 
     setContainerHeight: function () {
@@ -113,6 +120,7 @@ SG.listRenderer = {
     createTextNode: function (person, offset, displayed) {
         var textNode = this.template
             .replace('%%_id_%%', person.id)
+            .replace('%%_photo_id_%%', person.id)
             .replace('%%_avatar_%%', person.img + '?v=' + person.id)
             .replace('%%_top_%%', offset)
             .replace('%%_name_%%', person.name);
@@ -141,8 +149,8 @@ SG.listRenderer = {
     buildTemplate: function () {
         this.template = String().concat(
             '<div class="person" id="person-%%_id_%%" style="display: %%_display_%%; top: %%_top_%%px">',
-                '<img class="photo" data-src="%%_avatar_%%" src="public/img/1.jpeg">',
-                '<p class="name">%%_name_%%</a>',
+            '<img class="photo" id="photo-%%_photo_id_%%" data-src="%%_avatar_%%" src="public/img/0.jpeg">',
+            '<p class="name">%%_name_%%</a>',
             '</div>'
         );
     }
